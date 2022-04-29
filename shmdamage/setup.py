@@ -25,7 +25,7 @@ setup(
     ],
     packages=["shmdamage"],
     include_package_data=True,
-    install_requires=["requirements.txt"],
+    install_requires=["scipy==1.8.0"],
     entry_points={
         "console_scripts": [
             "",
