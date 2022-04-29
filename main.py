@@ -7,7 +7,7 @@ from shmdamage import hsmr
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # curvature of damaged structure
+    # curvature of damaged structure in the ROI
     c = [-2.90605835e-05, -2.90605835e-05, -1.39548861e-05, 4.57361045e-06,
          3.02031938e-05, -3.18233933e-05, 4.07652430e-06, 1.66006871e-05,
          2.83552664e-05, -3.93365184e-05, 1.51521764e-05, -5.37098821e-06,
