@@ -1,0 +1,59 @@
+import numpy as np
+from scipy.optimize import minimize
+
+
+def fun(x, c, m_, norm):
+    dyn_stiff = x[0]
+    s_0 = x[1]
+    m_0 = x[2]
+    x_locs = np.arange(len(m_))
+    __M = m_ + m_0 + x_locs*s_0
+    error = c - __M / dyn_stiff
+    loss = np.linalg.norm(error, ord=norm)
+    return loss
+
+
+def synthesis(c: np.ndarray, q: np.ndarray):
+    """
+    A function that returns a curvature corresponding to the healthy structure
+    (beam) in a Region Of Interest (ROI), given the curvature of the actual
+    structure (beam) c and the load q applied to the corresponding ROI. This
+    function assumes the damage in the ROI is sparse.
+    References: Garrido, Domizio, Curadelli, Ambrosini. Synthesis of healthy-
+    structure model responses for damage quantification, Structural Health
+    Monitoring (Internation Journal), 2022.
+
+    Parameters
+    ----------
+    c : ndarray(n,)
+        Curvature shape of the actual beam in the ROI.
+    q : ndarray(n,)
+        Loading shape of the actual beam in the ROI.
+
+    Returns
+    -------
+    c_h : ndarray(n,)
+        Curvature shape of the healthy ROI.
+    m_ : ndarray(n,)
+        Bending moment with null integration constants.
+    m : ndarray(n,)
+        Bending moment with apropriate integration constants and dynamic stiffness.
+    res_x : tuple(3,)
+        Dynamic stiffness, initial shear and initial bending moment.
+    """
+    x0 = (1, 0, 0)  # dyn_stiff, S_0, M_0
+    # bending moment with null integration constants
+    m_ = np.cumsum(np.cumsum(q))
+    # normalization
+    m_ = m_ * np.linalg.norm(c, ord=np.inf) / np.linalg.norm(m_, ord=np.inf)
+    # bending moment with appropriate integration constants and dynamic stiffness
+    res = minimize(fun, x0, method='SLSQP', args=(c, m_, 1))
+    dyn_stiff = res.x[0]
+    s_0 = res.x[1]  # initial shear
+    m_0 = res.x[2]  # initial bending moment
+    res_x = (dyn_stiff, s_0, m_0)
+    m = m_ + m_0 + np.arange(len(m_)) * s_0
+    # Healthy curvature
+    c_h = m / dyn_stiff
+    return c_h, m_, m, res_x
+
