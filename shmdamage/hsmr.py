@@ -7,20 +7,21 @@ def fun(x, c, m_, norm):
     s_0 = x[1]
     m_0 = x[2]
     x_locs = np.arange(len(m_))
-    __M = m_ + m_0 + x_locs*s_0
+    __M = m_ + m_0 + x_locs * s_0
     error = c - __M / dyn_stiff
     loss = np.linalg.norm(error, ord=norm)
     return loss
 
 
-def synthesis(c: np.ndarray, q: np.ndarray):
+def synthesis(c: np.ndarray, q: np.ndarray, dyn_stiff_initial_guess: float = 1,
+              s_0_initial_guess: float = 0, m_0_initial_guess: float = 0):
     """
     A function that returns a curvature corresponding to the healthy structure
     (beam) in a Region Of Interest (ROI), given the curvature of the actual
     structure (beam) c and the load q applied to the corresponding ROI. This
     function assumes the damage in the ROI is sparse.
-    References: Garrido, Domizio, Curadelli, Ambrosini. Synthesis of healthy-
-    structure model responses for damage quantification, Structural Health
+    References: Garrido, Domizio, Curadelli, Ambrosini. Synthesis of
+    healthy-structure model responses for damage quantification, Structural Health
     Monitoring (Internation Journal), 2022.
 
     Parameters
@@ -29,6 +30,13 @@ def synthesis(c: np.ndarray, q: np.ndarray):
         Curvature shape of the actual beam in the ROI.
     q : ndarray(n,)
         Loading shape of the actual beam in the ROI.
+    dyn_stiff_initial_guess : float
+        Initial guess for finding the dynamic stiffness of the beam on the ROI. By default, = 1.
+    m_0_initial_guess : float
+        Initial guess for finding the bending moment at the initial end of the ROI of the beam on the ROI. By default,
+        = 0.
+    s_0_initial_guess : float
+        Initial guess for finding the shear at the initial end of the ROI of the beam on the ROI. By default, = 0.
 
     Returns
     -------
@@ -37,11 +45,11 @@ def synthesis(c: np.ndarray, q: np.ndarray):
     m_ : ndarray(n,)
         Bending moment with null integration constants.
     m : ndarray(n,)
-        Bending moment with apropriate integration constants and dynamic stiffness.
-    res_x : tuple(3,)
+        Bending moment with appropriate integration constants and dynamic stiffness.
+    res_x_dict : dict(3,)
         Dynamic stiffness, initial shear and initial bending moment.
     """
-    x0 = (1, 0, 0)  # dyn_stiff, S_0, M_0
+    x0 = np.array([dyn_stiff_initial_guess, s_0_initial_guess, m_0_initial_guess])  # dyn_stiff, s_0, m_0
     # bending moment with null integration constants
     m_ = np.cumsum(np.cumsum(q))
     # normalization
@@ -55,5 +63,7 @@ def synthesis(c: np.ndarray, q: np.ndarray):
     m = m_ + m_0 + np.arange(len(m_)) * s_0
     # Healthy curvature
     c_h = m / dyn_stiff
-    return c_h, m_, m, res_x
-
+    res_x_dict = {'dyn_stiff': res_x[0],
+                  's_0': res_x[1],
+                  'm_0': res_x[2]}
+    return c_h, m_, m, res_x_dict
