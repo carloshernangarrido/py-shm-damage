@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="py-shm-damage",
-    version="1.0.2",
+    version="1.0.4",
     description="Damage detection algorithms for damage detection in Structural Health Monitoring",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -25,5 +25,5 @@ setup(
     ],
     packages=["shmdamage"],
     include_package_data=True,
-    install_requires=["scipy==1.8.0"],
+    install_requires=["scipy>=1.4.0"],
 )
