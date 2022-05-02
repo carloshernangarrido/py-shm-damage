@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: py-shm-damage
-Version: 1.0.1
+Version: 1.0.2
 Summary: Damage detection algorithms for damage detection in Structural Health Monitoring
 Home-page: https://github.com/carloshernangarrido/py-shm-damage
 Author: Hernán Garrido

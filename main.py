@@ -40,7 +40,7 @@ if __name__ == '__main__':
                   -50.90602568, -46.17845812, -46.92986553, -40.70950147,
                   -37.366559, -38.18055971, -38.08387943, -37.51037804])
     fig = []
-    for i, norm in enumerate([0, 1, 2, np.inf]):
+    for i, norm in enumerate([0, 1, 2, 100]):
         c_h, m_, m, res_x = hsmr.synthesis(c=c, q=q, norm=norm)
         print(res_x)
         fig.append(plt.figure())
