@@ -1,0 +1,9 @@
+README.md
+setup.py
+py_shm_damage.egg-info/PKG-INFO
+py_shm_damage.egg-info/SOURCES.txt
+py_shm_damage.egg-info/dependency_links.txt
+py_shm_damage.egg-info/requires.txt
+py_shm_damage.egg-info/top_level.txt
+shmdamage/__init__.py
+shmdamage/hsmr.py

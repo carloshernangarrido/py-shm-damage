@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: py-shm-damage
+Version: 1.0.0
+Summary: Damage detection algorithms for damage detection in Structural Health Monitoring
+Home-page: https://github.com/carloshernangarrido/py-shm-damage
+Author: Hernán Garrido
+Author-email: carloshernangarrido@gmail.com
+License: MIT
+Description: # py-shm-damage
+        Damage detection algorithms for damage detection in Structural Health Monitoring
+        
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Description-Content-Type: text/markdown

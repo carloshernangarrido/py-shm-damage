@@ -14,7 +14,7 @@ def fun(x, c, m_, norm):
 
 
 def synthesis(c: np.ndarray, q: np.ndarray, dyn_stiff_initial_guess: float = 1,
-              s_0_initial_guess: float = 0, m_0_initial_guess: float = 0):
+              s_0_initial_guess: float = 0, m_0_initial_guess: float = 0, norm: int = 1):
     """
     A function that returns a curvature corresponding to the healthy structure
     (beam) in a Region Of Interest (ROI), given the curvature of the actual
@@ -37,6 +37,9 @@ def synthesis(c: np.ndarray, q: np.ndarray, dyn_stiff_initial_guess: float = 1,
         = 0.
     s_0_initial_guess : float
         Initial guess for finding the shear at the initial end of the ROI of the beam on the ROI. By default, = 0.
+    norm : int
+        Norm, used for the fitting of the healthy c_h curvature to the (possibly) damaged curvature c
+
 
     Returns
     -------
@@ -49,16 +52,30 @@ def synthesis(c: np.ndarray, q: np.ndarray, dyn_stiff_initial_guess: float = 1,
     res_x_dict : dict(3,)
         Dynamic stiffness, initial shear and initial bending moment.
     """
+    # First approach using p-norm = 2
     x0 = np.array([dyn_stiff_initial_guess, s_0_initial_guess, m_0_initial_guess])  # dyn_stiff, s_0, m_0
     # bending moment with null integration constants
     m_ = np.cumsum(np.cumsum(q))
     # normalization
     m_ = m_ * np.linalg.norm(c, ord=np.inf) / np.linalg.norm(m_, ord=np.inf)
     # bending moment with appropriate integration constants and dynamic stiffness
-    res = minimize(fun, x0, method='SLSQP', args=(c, m_, 1))
+    res = minimize(fun, x0, method='SLSQP', args=(c, m_, 2))
     dyn_stiff = res.x[0]
     s_0 = res.x[1]  # initial shear
     m_0 = res.x[2]  # initial bending moment
+
+    # Final approach using p-norm = norm
+    x0 = np.array([dyn_stiff, s_0, m_0])
+    # bending moment with null integration constants
+    m_ = np.cumsum(np.cumsum(q))
+    # normalization
+    m_ = m_ * np.linalg.norm(c, ord=np.inf) / np.linalg.norm(m_, ord=np.inf)
+    # bending moment with appropriate integration constants and dynamic stiffness
+    res = minimize(fun, x0, method='SLSQP', args=(c, m_, norm))
+    dyn_stiff = res.x[0]  # dynamic stiffness
+    s_0 = res.x[1]  # initial shear
+    m_0 = res.x[2]  # initial bending moment
+
     res_x = (dyn_stiff, s_0, m_0)
     m = m_ + m_0 + np.arange(len(m_)) * s_0
     # Healthy curvature
