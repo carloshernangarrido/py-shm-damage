@@ -86,7 +86,7 @@ def synthesis(c: np.ndarray, q: np.ndarray, dyn_stiff_initial_guess: float = 1,
     # normalization
     m_ = m_ * np.linalg.norm(c, ord=np.inf) / np.linalg.norm(m_, ord=np.inf)
     # bending moment with appropriate integration constants and dynamic stiffness
-    res = minimize(fun, x0, method='SLSQP', args=(c, m_, norm))
+    res = minimize(fun, x0, method='SLSQP', args=(c, m_, norm), bounds=bounds)
     dyn_stiff = res.x[0]  # dynamic stiffness
     s_0 = res.x[1]  # initial shear
     m_0 = res.x[2]  # initial bending moment
